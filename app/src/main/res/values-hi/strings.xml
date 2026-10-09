@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">PermSense</string>
+
+    <!-- Navigation -->
+    <string name="nav_findings">निष्कर्ष</string>
+    <string name="nav_apps">ऐप</string>
+    <string name="nav_summary">सारांश</string>
+    <string name="nav_settings">सेटिंग</string>
+
+    <!-- Findings -->
+    <string name="findings_title">किस पर ध्यान देना है</string>
+    <string name="findings_loading">आपके ऐप जाँचे जा रहे हैं…</string>
+    <string name="findings_empty">अभी किसी चीज़ पर ध्यान देने की ज़रूरत नहीं है।</string>
+    <string name="findings_empty_detail">PermSense हर 15 मिनट में आपके ऐप जाँचता है और कुछ गड़बड़ दिखे तो आपको बताएगा।</string>
+    <string name="findings_empty_limited">PermSense अभी केवल यह देख पा रहा है कि कौन-से ऐप इंस्टॉल हैं और उन्हें क्या करने की अनुमति है। ऐप असल में क्या करते हैं यह भी देखने के लिए सेटिंग में गहरी जाँच सेट अप करें।</string>
+    <string name="last_checked">आख़िरी जाँच: %1$s</string>
+    <string name="never">अभी तक नहीं</string>
+    <string name="check_now">अभी जाँचें</string>
+    <string name="state_on">चालू</string>
+    <string name="state_off">उपलब्ध नहीं</string>
+    <string name="tier_t0">ऐप और अनुमतियाँ</string>
+    <string name="tier_t1">ऐप की गतिविधि</string>
+    <string name="tier_t1plus">फ़ोन का इतिहास</string>
+    <string name="tier_t2">लाइव जाँच</string>
+
+    <!-- Actions -->
+    <string name="action_allow">अनुमति दें</string>
+    <string name="action_app_details">ऐप का ब्योरा</string>
+    <string name="action_back">वापस</string>
+    <string name="action_cancel">रद्द करें</string>
+    <string name="action_confirm_fix">पहुँच हटाएँ</string>
+    <string name="action_erase">सब कुछ मिटाएँ</string>
+    <string name="action_export">प्रमाण रिपोर्ट निर्यात करें</string>
+    <string name="action_not_useful">काम का नहीं</string>
+    <string name="action_open_app_settings">Android सेटिंग में खोलें</string>
+    <string name="action_open_settings">सेटिंग खोलें</string>
+    <string name="action_open_shizuku">Shizuku खोलें</string>
+    <string name="action_quick_exit">बाहर निकलें</string>
+    <string name="action_set_up">सेट अप करें</string>
+    <string name="action_undo">वापस करें</string>
+
+    <!-- Banners -->
+    <string name="banner_usage_access">PermSense के लिए “उपयोग की पहुँच” (Usage access) चालू करें, ताकि वह जान सके कि कोई ऐप कब स्क्रीन पर खुला था। इसके बिना PermSense यह तो बता सकता है कि ऐप को क्या करने की अनुमति है, पर यह नहीं कि कोई पहुँच छिपकर हुई या नहीं।</string>
+    <string name="banner_ledger_error">इस फ़ोन पर रखा निजी रिकॉर्ड खोला नहीं जा सका: %1$s</string>
+    <string name="banner_chain_broken">सहेजा गया रिकॉर्ड अपनी जाँच में विफल रहा, इसलिए कुछ निष्कर्ष छूट सकते हैं। आप सेटिंग में इसे मिटाकर नए सिरे से शुरू कर सकते हैं।</string>
+    <string name="banner_shizuku_not_allowed">Shizuku चल रहा है, लेकिन PermSense को अभी उसके इस्तेमाल की अनुमति नहीं मिली है।</string>
+    <string name="banner_live_paused">लाइव जाँच रुकी हुई है। फ़ोन रीस्टार्ट होने के बाद ऐसा होना सामान्य है: Shizuku खोलकर उसे दोबारा चालू करें। तब तक PermSense हर 15 मिनट में जाँच करता रहता है।</string>
+    <string name="banner_live_off">लाइव जाँच बंद है, इसलिए PermSense यह तो देखता है कि ऐप को क्या करने की अनुमति है, पर ऐप असल में क्या करते हैं उसका केवल एक हिस्सा। इसे सेट अप में चालू किया जा सकता है।</string>
+    <string name="banner_learning">PermSense अभी सीख रहा है कि आपके हर ऐप के लिए क्या सामान्य है। असामान्य गतिविधि की जाँच पहले एक-दो हफ़्तों में बेहतर होती जाती है।</string>
+    <string name="banner_review">कुछ नियम अभी किसी व्यक्ति से समीक्षा के इंतज़ार में हैं (%1$s)। उनके शब्द बदल सकते हैं।</string>
+
+    <!-- Apps -->
+    <string name="apps_title">आपके ऐप</string>
+    <string name="apps_subtitle">आपके इंस्टॉल किए ऐप, और हर ऐप को किन संवेदनशील चीज़ों के इस्तेमाल की अनुमति है।</string>
+    <string name="apps_empty">कोई ऐप नहीं मिला।</string>
+    <string name="apps_allowed">अनुमति: %1$s</string>
+    <string name="apps_allowed_title">इस्तेमाल की अनुमति</string>
+    <string name="apps_none_sensitive">किसी संवेदनशील चीज़ की अनुमति नहीं है।</string>
+    <string name="apps_lending_badge">डिजिटल-लेंडिंग ऐप माना गया</string>
+    <string name="apps_lending_switch">इसे डिजिटल-लेंडिंग ऐप मानें</string>
+    <string name="apps_lending_hint">लोन ऐप पर सख़्त नियम लागू होते हैं, जैसे संपर्क न पढ़ना।</string>
+    <string name="app_not_installed">यह ऐप अब इंस्टॉल नहीं है। इसका इतिहास तब तक रखा जाता है जब तक वह पुराना होकर हट नहीं जाता।</string>
+    <string name="version_number">वर्शन %1$d</string>
+
+    <!-- Timeline -->
+    <string name="timeline_title">पिछले 14 दिन</string>
+    <string name="timeline_recent">हाल की गतिविधि</string>
+    <string name="timeline_none">अभी तक कुछ दर्ज नहीं हुआ।</string>
+    <string name="timeline_older">पुरानी गतिविधि केवल रोज़ के कुल योग के रूप में रखी जाती है।</string>
+    <string name="timeline_max">एक दिन में सबसे ज़्यादा: %1$d</string>
+    <string name="timeline_change">%1$s की पहुँच बदली गई (%2$s)</string>
+    <string name="stratum_visible">ऐप स्क्रीन पर था</string>
+    <string name="stratum_service">दिखने वाली बैकग्राउंड सेवा</string>
+    <string name="stratum_background">बैकग्राउंड में</string>
+    <string name="stratum_screen_off">स्क्रीन बंद या लॉक</string>
+    <string name="stratum_unknown">पता नहीं</string>
+
+    <!-- Summary -->
+    <string name="summary_title">इस सप्ताह</string>
+    <string name="changes_title">PermSense से किए गए बदलाव</string>
+    <string name="changes_hint">हर बदलाव की बाद में जाँच की गई थी। आप किसी को भी वापस कर सकते हैं।</string>
+    <string name="changes_none">आपने PermSense से कुछ नहीं बदला है।</string>
+    <string name="change_line">%2$s से %1$s की पहुँच हटाई गई</string>
+
+    <!-- Fixing -->
+    <string name="fix_confirm_title">यह पहुँच हटाएँ?</string>
+    <string name="fix_confirm_body">PermSense “%2$s” से “%1$s” की पहुँच हटा देगा। आप इसे सारांश टैब से वापस कर सकते हैं। इसके बिना ऐप ठीक से काम न करे, ऐसा हो सकता है।</string>
+    <string name="fix_confirm_body_foreground">PermSense “%2$s” को आपका %1$s केवल तभी इस्तेमाल करने देगा जब ऐप खुला हो। आप इसे सारांश टैब से वापस कर सकते हैं।</string>
+
+    <!-- Messages -->
+    <string name="msg_fix_done">हो गया। अब Android इस पहुँच को हटाया हुआ दिखाता है।</string>
+    <string name="msg_fix_already">यह पहले से ऐसा ही था।</string>
+    <string name="msg_fix_not_applied">Android ने बदलाव लागू नहीं किया।</string>
+    <string name="msg_fix_failed">बदलाव नहीं हो सका: %1$s</string>
+    <string name="msg_fix_rejected">अनुमति नहीं है: %1$s</string>
+    <string name="msg_undo_done">पहले जैसा कर दिया गया।</string>
+    <string name="msg_export_failed">रिपोर्ट नहीं बन सकी।</string>
+    <string name="msg_wiped">PermSense ने जो कुछ सहेजा था, मिटा दिया गया है।</string>
+    <string name="msg_selfgrant_ok">हो गया। PermSense के पास अब अपने लिए %1$d अनुमति(याँ) हैं।</string>
+    <string name="msg_selfgrant_failed">यह नहीं हो सका: %1$s</string>
+    <string name="msg_need_shizuku">यहाँ से अनुमतियाँ बदलने के लिए PermSense को Shizuku चाहिए। इसलिए ऐप का सेटिंग पेज खोला जा रहा है।</string>
+    <string name="msg_lock_unavailable">पहले अपने फ़ोन पर स्क्रीन लॉक लगाएँ, फिर दोबारा कोशिश करें।</string>
+    <string name="msg_copied">कॉपी हो गया।</string>
+    <string name="msg_cannot_open">इस फ़ोन पर इसे खोलने वाला कोई ऐप नहीं है।</string>
+
+    <!-- Settings -->
+    <string name="settings_title">सेटिंग</string>
+    <string name="settings_language">भाषा</string>
+    <string name="lang_system">फ़ोन की भाषा</string>
+    <string name="lang_en">English</string>
+    <string name="lang_hi">हिन्दी</string>
+    <string name="settings_privacy">निजता और सुरक्षा</string>
+    <string name="settings_lock">PermSense को लॉक करें</string>
+    <string name="settings_lock_detail">हर बार खोलते समय फ़िंगरप्रिंट, चेहरा या स्क्रीन लॉक माँगता है। साथ ही PermSense को स्क्रीनशॉट और हाल के ऐप की सूची से छिपा देता है।</string>
+    <string name="settings_digest">साप्ताहिक सारांश की सूचना</string>
+    <string name="settings_digest_detail">हफ़्ते में एक बार एक छोटी, सामान्य-सी सूचना कि आपका सारांश तैयार है। उसमें किसी ऐप का नाम नहीं होता।</string>
+    <string name="settings_quick_exit_detail">“बाहर निकलें” बटन PermSense को तुरंत बंद करता है और हाल के ऐप की सूची से हटा देता है।</string>
+    <string name="settings_sensing">PermSense क्या जाँचता है</string>
+    <string name="settings_live">लाइव जाँच</string>
+    <string name="settings_live_detail">इसके लिए Shizuku चाहिए। हर पहुँच को होते ही देखता है। बंद होने पर PermSense केवल हर 15 मिनट में जाँचता है।</string>
+    <string name="settings_t1_only">व्यापक DUMP अनुमति कभी इस्तेमाल न करें</string>
+    <string name="settings_t1_only_detail">फ़ोन के इतिहास वाला हिस्सा छोड़ देता है। इसके लिए जो अनुमति चाहिए वह केवल ऐप-अनुमतियाँ नहीं, कई सिस्टम सेवाओं की जानकारी पढ़ सकती है।</string>
+    <string name="settings_setup">गहरी जाँच सेट अप करें</string>
+    <string name="settings_capabilities">इस फ़ोन पर क्या काम करता है</string>
+    <string name="settings_capabilities_hint">बटन दबाएँ। हर तरह की जाँच आज़माई जाएगी और दिखेगा कि यहाँ कौन-सी चलती है।</string>
+    <string name="settings_check_again">जाँचें क्या काम करता है</string>
+    <string name="checking">जाँच हो रही है…</string>
+    <string name="settings_copy_report">सहायता रिपोर्ट कॉपी करें</string>
+    <string name="settings_evidence">प्रमाण</string>
+    <string name="export_limits">PermSense ने जो दर्ज किया उसकी एक हस्ताक्षरित फ़ाइल और एक पढ़ने लायक रिपोर्ट बनाता है। यह साबित करता है कि रिकॉर्ड लिखे जाने के बाद बदला नहीं गया। यह साबित नहीं करता कि Android ने जो बताया वह सच था, और PermSense यह दावा नहीं करता कि इसे किसी कानूनी कार्यवाही में स्वीकार किया जाएगा।</string>
+    <string name="settings_erase">सब कुछ मिटाएँ</string>
+    <string name="settings_erase_detail">इस फ़ोन से निजी रिकॉर्ड, उसकी चाबियाँ और निर्यात की हर फ़ाइल मिटा देता है। इसे वापस नहीं किया जा सकता।</string>
+    <string name="erase_confirm_title">सब कुछ मिटाएँ?</string>
+    <string name="erase_confirm_body">PermSense ने इस फ़ोन पर जो कुछ दर्ज किया है और उसकी चाबियाँ, सब मिट जाएँगे। आपने जो रिपोर्ट पहले साझा की हैं वे उन्हीं के पास रहेंगी जिन्हें आपने दी थीं। इसे वापस नहीं किया जा सकता।</string>
+
+    <!-- About and limits -->
+    <string name="about_title">जानकारी और सीमाएँ</string>
+    <string name="about_no_network">PermSense के पास इंटरनेट की कोई पहुँच नहीं है, और इसे कोई भी ऐप की अनुमतियों में देख सकता है। जब तक आप ख़ुद कोई रिपोर्ट साझा नहीं करते, कुछ भी इस फ़ोन से बाहर नहीं जाता।</string>
+    <string name="about_integrity">रिपोर्ट यह साबित करती है कि PermSense के लिखने के बाद रिकॉर्ड में कोई बदलाव नहीं हुआ। यह साबित नहीं करती कि Android ने PermSense को जो जानकारी दी वह सच थी। जिसके हाथ में फ़ोन का पूरा नियंत्रण हो, वह सिद्धांत रूप में रिकॉर्ड होने से पहले प्रविष्टियाँ बदल सकता है।</string>
+    <string name="about_legal">PermSense यह दावा नहीं करता कि कोई भी रिपोर्ट किसी कानूनी कार्यवाही में स्वीकार की जाएगी।</string>
+    <string name="about_rules">कुछ नियम, जिनमें लेंडिंग के नियम भी हैं, ऐसे विनियमों का हवाला देते हैं जिनके सटीक खंड-क्रमांक की पुष्टि अभी किसी व्यक्ति से होनी बाकी है।</string>
+
+    <!-- Technical details -->
+    <string name="details_title">तकनीकी ब्योरा</string>
+    <string name="details_rows">निजी रिकॉर्ड में प्रविष्टियाँ: %1$d</string>
+    <string name="details_chain_ok">रिकॉर्ड की अखंडता जाँच: पास</string>
+    <string name="details_chain_broken">रिकॉर्ड की अखंडता जाँच: विफल</string>
+
+    <!-- Capabilities -->
+    <string name="cap_working">चल रहा है</string>
+    <string name="cap_needs_setup">सेट अप चाहिए</string>
+    <string name="cap_off">बंद है</string>
+    <string name="cap_failed">काम नहीं कर रहा</string>
+    <string name="cap_t0_inventory">इंस्टॉल किए ऐप</string>
+    <string name="cap_t0_usage">उपयोग की पहुँच</string>
+    <string name="cap_fix">अनुमतियाँ हटाना</string>
+
+    <!-- Lock -->
+    <string name="lock_title">PermSense लॉक है</string>
+    <string name="lock_unlock">अनलॉक करें</string>
+    <string name="biometric_title">PermSense अनलॉक करें</string>
+    <string name="biometric_subtitle">फ़िंगरप्रिंट, चेहरा या स्क्रीन लॉक इस्तेमाल करें</string>
+
+    <!-- Sharing -->
+    <string name="share_subject">PermSense प्रमाण रिपोर्ट</string>
+    <string name="share_chooser">रिपोर्ट साझा करें</string>
+
+    <!-- Notification channels -->
+    <string name="channel_alerts">अपडेट</string>
+    <string name="channel_alerts_description">कुछ नया देखने लायक होने पर एक छोटा संदेश।</string>
+    <string name="channel_digest">साप्ताहिक सारांश</string>
+    <string name="channel_digest_description">हफ़्ते में एक बार, आपके ऐप का छोटा सारांश।</string>
+
+    <!-- Setup -->
+    <string name="onb_continue">आगे बढ़ें</string>
+    <string name="onb_skip">छोड़ें</string>
+    <string name="onb_start">शुरू करें</string>
+    <string name="onb_welcome_title">PermSense में आपका स्वागत है</string>
+    <string name="onb_welcome_body">PermSense देखता है कि आपके ऐप अपनी अनुमतियों का इस्तेमाल कैसे करते हैं (संपर्क, कैमरा, माइक्रोफ़ोन, लोकेशन और बहुत कुछ), और कुछ गड़बड़ लगे तो आपको सीधे-सादे शब्दों में बताता है।</string>
+    <string name="onb_promise_1">सब कुछ इसी फ़ोन में रहता है। PermSense के पास इंटरनेट की कोई पहुँच नहीं है।</string>
+    <string name="onb_promise_2">यह केवल देखता है। जब तक आप बटन दबाकर पुष्टि न करें, कुछ नहीं बदलता।</string>
+    <string name="onb_promise_3">सेट अप में कुछ मिनट लगते हैं। केवल अगला कदम ज़रूरी है; बाकी वैकल्पिक है।</string>
+    <string name="onb_usage_title">कदम 1: उपयोग की पहुँच</string>
+    <string name="onb_usage_body">इससे PermSense देख पाता है कि कोई ऐप कब आपकी स्क्रीन पर खुला था। इसी से वह पहचानता है कि कौन-सी पहुँच आप देख सकते थे और कौन-सी नहीं।</string>
+    <string name="onb_usage_note">सूची में PermSense ढूँढकर उसे चालू करें, फिर यहाँ लौट आएँ।</string>
+    <string name="onb_state_on">हो गया</string>
+    <string name="onb_state_off">अभी नहीं हुआ</string>
+    <string name="onb_notif_title">कदम 2: सूचनाएँ (वैकल्पिक)</string>
+    <string name="onb_notif_body">जब किसी चीज़ पर ध्यान देना हो तो PermSense एक छोटी, सामान्य-सी सूचना भेज सकता है, और एक साप्ताहिक सारांश भी। सूचनाओं में किसी ऐप का नाम नहीं होता और वे लॉक स्क्रीन पर छिपी रहती हैं।</string>
+    <string name="onb_notif_button">सूचनाओं की अनुमति दें</string>
+    <string name="onb_deeper_title">कदम 3: और गहराई से (वैकल्पिक)</string>
+    <string name="onb_deeper_body">इस कदम के बिना PermSense यह बताता है कि हर ऐप क्या इस्तेमाल कर सकता है। इसके साथ वह यह भी देखता है कि ऐप असल में क्या और कब करते हैं, बैकग्राउंड में भी। इसके लिए Shizuku नाम का सहायक ऐप चाहिए।</string>
+    <string name="onb_shizuku_title">Shizuku</string>
+    <string name="onb_shizuku_missing">Shizuku इंस्टॉल नहीं है। उसके आधिकारिक पेज से इंस्टॉल करें, फिर यहाँ लौटें।</string>
+    <string name="onb_shizuku_page">Shizuku का पेज खोलें</string>
+    <string name="onb_shizuku_stopped">Shizuku इंस्टॉल है पर चल नहीं रहा। उसे खोलकर “वायरलेस डीबगिंग” (Android 11 या उसके बाद) से चालू करें। Android एक बार पेयरिंग कोड दिखाएगा।</string>
+    <string name="onb_shizuku_restart">फ़ोन हर बार रीस्टार्ट होने के बाद Shizuku को दोबारा चालू करना पड़ता है। यह सामान्य है, कोई ख़राबी नहीं। तब तक PermSense कम ब्योरे के साथ काम करता रहता है।</string>
+    <string name="onb_shizuku_allow">Shizuku चल रहा है। PermSense को उसे इस्तेमाल करने की अनुमति दें।</string>
+    <string name="onb_shizuku_ready">Shizuku चल रहा है और PermSense को उसके इस्तेमाल की अनुमति है।</string>
+    <string name="onb_dev_options">डेवलपर विकल्प</string>
+    <string name="onb_oem_title">आपके फ़ोन पर</string>
+    <string name="oem_xiaomi">Xiaomi, Redmi और POCO फ़ोन पर “USB डीबगिंग (सुरक्षा सेटिंग)” भी चालू करें। यह सामान्य USB डीबगिंग से अलग स्विच है।</string>
+    <string name="oem_oppo">OPPO, Realme और OnePlus फ़ोन पर Shizuku चालू करने से पहले डेवलपर विकल्प में “अनुमति निगरानी” (Permission monitoring) बंद करें।</string>
+    <string name="oem_vivo">कभी-कभी फ़ोन बनाने वाली कंपनी डीबगिंग के लिए अपना अलग स्विच जोड़ देती है। अगर यहाँ कोई कदम कुछ करता न दिखे, तो डेवलपर विकल्प में डीबगिंग का कोई अतिरिक्त स्विच ढूँढें और अपने ब्रांड के लिए Shizuku की अपनी गाइड देखें।</string>
+    <string name="oem_samsung">कभी-कभी फ़ोन बनाने वाली कंपनी डीबगिंग के लिए अपना अलग स्विच जोड़ देती है। अगर यहाँ कोई कदम कुछ करता न दिखे, तो डेवलपर विकल्प में डीबगिंग का कोई अतिरिक्त स्विच ढूँढें और अपने ब्रांड के लिए Shizuku की अपनी गाइड देखें।</string>
+    <string name="oem_huawei">कभी-कभी फ़ोन बनाने वाली कंपनी डीबगिंग के लिए अपना अलग स्विच जोड़ देती है। अगर यहाँ कोई कदम कुछ करता न दिखे, तो डेवलपर विकल्प में डीबगिंग का कोई अतिरिक्त स्विच ढूँढें और अपने ब्रांड के लिए Shizuku की अपनी गाइड देखें।</string>
+    <string name="onb_grant_title">जाँच रीस्टार्ट के बाद भी चलती रहे</string>
+    <string name="onb_grant_body">PermSense को एक बार कुछ Android अनुमतियाँ देता है, ताकि Shizuku बंद होने पर भी उसकी 15 मिनट की जाँच रीस्टार्ट के बाद चलती रहे। इसके बाद आप डेवलपर विकल्प फिर से बंद कर सकते हैं।</string>
+    <string name="onb_grant_button">PermSense को ये अनुमतियाँ दें</string>
+    <string name="onb_grant_done">हो गया। रीस्टार्ट के बाद भी जाँच चलती रहेगी।</string>
+    <string name="onb_grant_needs_shizuku">इसके लिए पहले Shizuku का चालू और अनुमति-प्राप्त होना ज़रूरी है।</string>
+    <string name="onb_t1_only_body">फ़ोन के इतिहास वाला हिस्सा छोड़ दें, ताकि व्यापक DUMP अनुमति न कभी माँगी जाए न इस्तेमाल हो।</string>
+    <string name="onb_dev_off">कुछ बैंकिंग ऐप डेवलपर विकल्प चालू होने पर चलने से मना कर देते हैं। ऊपर की अनुमतियाँ दे देने के बाद आप डेवलपर विकल्प फिर से बंद कर सकते हैं।</string>
+    <string name="onb_done_title">सब तैयार है</string>
+    <string name="onb_done_body">इस फ़ोन पर यह सब काम करता है। आप इनमें से कुछ भी बाद में सेटिंग में बदल सकते हैं।</string>
+    <string name="onb_check">जाँचें क्या काम करता है</string>
+
+</resources>

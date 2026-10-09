@@ -1,0 +1,43 @@
+*.iml
+.gradle/
+local.properties
+
+# Android Studio: ignore temporary metadata, preserve other shared settings
+/.idea/caches
+/.idea/libraries
+/.idea/modules.xml
+/.idea/workspace.xml
+/.idea/navEditor.xml
+/.idea/assetWizardSettings.xml
+
+# OS files
+.DS_Store
+
+# Generated build output and caches
+**/build/
+.kotlin/
+captures/
+.externalNativeBuild/
+.cxx/
+
+# Generated Android packages
+*.apk
+*.aab
+
+# Generated diagnostic log
+/gradle-debug.log
+
+build-logs/
+.idea/
+premsense-extracted/
+spec.txt
+private/
+# Local Android and Gradle files
+# Local environment and signing secrets
+.env
+.env.*
+!.env.example
+*.jks
+*.keystore
+key.properties
+keystore.properties

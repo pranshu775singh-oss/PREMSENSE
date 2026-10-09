@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Only the folder an export is written to can be shared. -->
+<paths>
+    <cache-path
+        name="exports"
+        path="exports/" />
+</paths>

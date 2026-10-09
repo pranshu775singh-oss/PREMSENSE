@@ -1,0 +1,413 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PermSense report checker</title>
+<style>
+  :root { --ok:#1b6e2d; --bad:#a3231b; --ink:#16202a; --soft:#5a6b7a; --line:#d8e0e7; --bg:#f6f8fa; }
+  * { box-sizing: border-box; }
+  body { margin:0; font:16px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; color:var(--ink); background:var(--bg); }
+  main { max-width: 52rem; margin: 0 auto; padding: 1.5rem 1rem 4rem; }
+  h1 { font-size: 1.5rem; margin: 0 0 .25rem; }
+  p.lead { color: var(--soft); margin-top: 0; }
+  #drop { border: 2px dashed var(--line); background:#fff; border-radius: 10px; padding: 1.5rem; text-align:center; cursor:pointer; }
+  #drop.over { border-color:#0b5c8a; background:#eef6fb; }
+  button { font: inherit; padding:.5rem 1rem; border-radius:8px; border:1px solid #0b5c8a; background:#0b5c8a; color:#fff; cursor:pointer; }
+  button.secondary { background:#fff; color:#0b5c8a; }
+  button:disabled { opacity:.5; cursor:default; }
+  #result { margin-top: 1.25rem; background:#fff; border:1px solid var(--line); border-radius:10px; padding: 1rem 1.25rem; display:none; }
+  .verdict { font-weight:700; font-size:1.15rem; padding:.5rem .75rem; border-radius:8px; margin:.5rem 0 1rem; }
+  .verdict.ok { background:#e5f4e8; color:var(--ok); }
+  .verdict.bad { background:#fbe9e7; color:var(--bad); }
+  ul.checks { list-style:none; padding:0; margin:0 0 1rem; }
+  ul.checks li { padding:.2rem 0; }
+  .tag { display:inline-block; min-width:3.2rem; font-weight:700; }
+  .pass { color:var(--ok); } .fail { color:var(--bad); }
+  dl { display:grid; grid-template-columns: 11rem 1fr; gap:.15rem 1rem; margin:0 0 1rem; }
+  dt { color:var(--soft); }
+  .limits { font-size:.9rem; color:var(--soft); border-top:1px solid var(--line); padding-top:.75rem; }
+  .row { display:flex; gap:.75rem; flex-wrap:wrap; margin-top:.75rem; }
+  code { background:#eef1f4; padding:.05rem .3rem; border-radius:4px; }
+</style>
+</head>
+<body>
+<main>
+  <h1>PermSense report checker</h1>
+  <p class="lead">Checks a PermSense evidence report, or the QuickCash probe's signed log, in this page. Nothing is uploaded: the file is read here and never leaves this browser, and this page makes no network requests.</p>
+
+  <div id="drop" tabindex="0" role="button" aria-label="Choose a report file or drop it here">
+    <strong>Drop a report file here</strong>, or click to choose one<br>
+    <small>permsense-evidence-….json or intended_log.jsonl</small>
+    <input id="file" type="file" hidden>
+  </div>
+
+  <div id="result" aria-live="polite">
+    <div id="verdict" class="verdict"></div>
+    <ul id="checks" class="checks"></ul>
+    <dl id="summary"></dl>
+    <div class="row">
+      <button id="tamper" class="secondary">Change one byte and check again</button>
+      <button id="reset" class="secondary">Start over with the original file</button>
+    </div>
+    <p id="tamperNote" class="limits" hidden></p>
+    <div class="limits" id="limits"></div>
+  </div>
+</main>
+
+<script>
+"use strict";
+
+const SEAL_DOMAIN = "permsense-evidence-seal|v1|";
+const GENESIS = "0".repeat(64);
+const HEX64 = /^[0-9a-f]{64}$/;
+const enc = new TextEncoder();
+
+class Reject extends Error { constructor(check, message) { super(message); this.check = check; } }
+
+// ------------------------------------------------------------------ small helpers
+
+const hex = (buf) => Array.from(new Uint8Array(buf), (b) => b.toString(16).padStart(2, "0")).join("");
+async function sha256(bytes) { return hex(await crypto.subtle.digest("SHA-256", bytes)); }
+
+/** Canonical base64 only: anything that does not re-encode to the same text is refused. */
+function b64(text, what) {
+  if (typeof text !== "string") throw new Reject("format", what + " must be text");
+  let bin;
+  try { bin = atob(text); } catch (e) { throw new Reject("format", what + " is not valid base64"); }
+  const bytes = Uint8Array.from(bin, (c) => c.charCodeAt(0));
+  if (btoa(bin) !== text) throw new Reject("format", what + " is not canonical base64");
+  return bytes;
+}
+
+/**
+ * ASN.1 DER ECDSA signature -> the raw r||s form WebCrypto expects.
+ *
+ * Strict on purpose. WebCrypto only sees r and s, so a lenient reader would accept a signature
+ * whose surrounding bytes (the length fields, extra padding) had been changed, and "any changed
+ * byte is rejected" would stop being true. Anything that is not the single canonical DER encoding
+ * of a pair of positive integers is refused.
+ */
+function derToRaw(der) {
+  const bad = () => { throw new Reject("signature", "malformed signature"); };
+  let p = 0;
+  const byte = () => { if (p >= der.length) bad(); return der[p++]; };
+  const length = () => {
+    const b = byte();
+    if (b < 0x80) return b;
+    if (b === 0x81) { const l = byte(); if (l < 0x80) bad(); return l; }   // long form, only where it is the shortest form
+    return bad();
+  };
+
+  if (byte() !== 0x30) bad();
+  if (length() !== der.length - p) bad();                                   // the outer length covers exactly the rest
+
+  const parts = [];
+  for (let k = 0; k < 2; k++) {
+    if (byte() !== 0x02) bad();
+    const n = length();
+    if (n === 0 || p + n > der.length) bad();
+    let v = der.slice(p, p + n); p += n;
+    if (v[0] & 0x80) bad();                                                 // negative
+    if (v.length > 1 && v[0] === 0 && !(v[1] & 0x80)) bad();                // a leading zero that is not needed
+    if (v[0] === 0) v = v.slice(1);
+    if (v.length > 32) bad();
+    const out = new Uint8Array(32); out.set(v, 32 - v.length); parts.push(out);
+  }
+  if (p !== der.length) bad();                                              // nothing after s
+
+  const raw = new Uint8Array(64); raw.set(parts[0], 0); raw.set(parts[1], 32);
+  return raw;
+}
+
+async function importKey(spkiBase64, what) {
+  const der = b64(spkiBase64, what + " key");
+  try {
+    return await crypto.subtle.importKey("spki", der, { name: "ECDSA", namedCurve: "P-256" }, false, ["verify"]);
+  } catch (e) { throw new Reject("format", what + " key is not a valid P-256 public key"); }
+}
+
+async function verifySig(key, payloadBytes, sigBase64, what) {
+  const der = b64(sigBase64, what + " signature");
+  let raw; try { raw = derToRaw(der); } catch (e) { return false; }
+  return crypto.subtle.verify({ name: "ECDSA", hash: "SHA-256" }, key, raw, payloadBytes);
+}
+
+function strictJson(text, what) {
+  let v; try { v = JSON.parse(text); } catch (e) { throw new Reject("parse", what + " is not valid JSON"); }
+  if (v === null || typeof v !== "object" || Array.isArray(v)) throw new Reject("parse", what + " is not an object");
+  return v;
+}
+
+const sameKeys = (o, keys) => { const k = Object.keys(o).sort().join(); return k === [...keys].sort().join(); };
+const isInt = (v) => Number.isSafeInteger(v);
+
+// ------------------------------------------------------------------ evidence report
+
+const ROW_KEYS = ["timestampMs","uid","packageName","versionCode","op","accessKind","durationMs","attributionTag","flags","visibilityStratum","screenState","sourceTier","observationCount","accessResult","sourceEventIds","recordKind","userId","schemaVersion","prevHash","hash"];
+
+async function rowHash(r) {
+  const ids = Array.from(new Set(r.sourceEventIds)).sort().join(",");
+  const fields = [r.schemaVersion, r.recordKind, r.timestampMs, r.userId, r.uid, r.packageName, r.versionCode, r.op,
+                  r.accessKind, r.durationMs, r.attributionTag, r.flags, r.visibilityStratum, r.screenState,
+                  r.sourceTier, r.observationCount, r.accessResult, ids];
+  // A present value is its length in characters, a colon, then its text. A missing value is a lone "N".
+  const canonical = fields.map((f) => (f === null ? "N" : (() => { const t = String(f); return t.length + ":" + t; })())).join("|");
+  const a = enc.encode(r.prevHash), b = enc.encode(canonical);
+  const input = new Uint8Array(a.length + 1 + b.length);
+  input.set(a, 0); input[a.length] = 0x1f; input.set(b, a.length + 1);
+  return sha256(input);
+}
+
+async function verifyEvidence(bytes) {
+  const checks = []; const notes = []; let summary = null;
+  const pass = (name, detail) => checks.push({ name, ok: true, detail });
+  try {
+    // 1. layout and seal
+    const first = bytes.indexOf(0x0a);
+    if (first <= 0) throw new Reject("file layout", "expected a body line followed by a seal line");
+    let bodyEnd = first; if (bytes[bodyEnd - 1] === 0x0d) bodyEnd--;
+    const rest = bytes.slice(first + 1);
+    if (rest.length === 0 || rest[rest.length - 1] !== 0x0a) throw new Reject("file layout", "the file does not end with a newline");
+    let restEnd = rest.length - 1; if (restEnd > 0 && rest[restEnd - 1] === 0x0d) restEnd--;
+    const sealBytes = rest.slice(0, restEnd);
+    if (sealBytes.indexOf(0x0a) >= 0) throw new Reject("file layout", "there is more than one line after the body");
+    const bodyBytes = bytes.slice(0, bodyEnd);
+
+    const dec = new TextDecoder("utf-8", { fatal: true });
+    let bodyText, sealText;
+    try { bodyText = dec.decode(bodyBytes); sealText = dec.decode(sealBytes); } catch (e) { throw new Reject("file layout", "the file is not valid UTF-8"); }
+
+    const seal = strictJson(sealText, "the seal");
+    if (!sameKeys(seal, ["algorithm","digest","publicKey","sealVersion","signature"])) throw new Reject("document seal", "the seal has unexpected or missing fields");
+    if (seal.algorithm !== "SHA-256") throw new Reject("document seal", "unsupported digest algorithm");
+    if (seal.sealVersion !== 1) throw new Reject("document seal", "unsupported seal version");
+    const digest = await sha256(bodyBytes);
+    if (seal.digest !== digest) throw new Reject("document seal", "the body does not match its digest: the file was changed after it was sealed");
+    const sealKey = await importKey(seal.publicKey, "seal");
+    if (!(await verifySig(sealKey, enc.encode(SEAL_DOMAIN + digest), seal.signature, "seal"))) throw new Reject("document seal", "the seal signature is not valid");
+    pass("document seal", "the body is exactly what was signed (SHA-256 " + digest + ")");
+
+    // 2. body
+    const body = strictJson(bodyText, "the body");
+    if (body.format !== "permsense-evidence") throw new Reject("format", "not a PermSense evidence file");
+    if (body.formatVersion !== 1) throw new Reject("format", "unsupported format version " + body.formatVersion);
+    pass("format", "PermSense evidence, version 1");
+
+    const ledger = body.ledger; if (!ledger || typeof ledger !== "object") throw new Reject("format", "\"ledger\" must be an object");
+    const rows = ledger.rows; if (!Array.isArray(rows)) throw new Reject("format", "\"rows\" must be a list");
+    if (rows.length !== ledger.rowCount) throw new Reject("ledger rows", "the stated row count does not match the rows present");
+    rows.forEach((r, i) => {
+      if (!r || typeof r !== "object" || !sameKeys(r, ROW_KEYS)) throw new Reject("ledger rows", "row " + i + " has unexpected or missing fields");
+      if (r.schemaVersion !== 3) throw new Reject("ledger rows", "row " + i + " uses an unsupported schema");
+      for (const k of ["timestampMs","uid","versionCode","flags","observationCount","userId","schemaVersion"]) if (!isInt(r[k])) throw new Reject("ledger rows", "row " + i + ": \"" + k + "\" must be an integer");
+      for (const k of ["packageName","op","accessKind","visibilityStratum","screenState","sourceTier","recordKind","prevHash","hash"]) if (typeof r[k] !== "string") throw new Reject("ledger rows", "row " + i + ": \"" + k + "\" must be text");
+      if (!HEX64.test(r.prevHash) || !HEX64.test(r.hash)) throw new Reject("ledger rows", "row " + i + ": a hash is not 64 hex digits");
+      if (!Array.isArray(r.sourceEventIds) || r.sourceEventIds.some((x) => typeof x !== "string")) throw new Reject("ledger rows", "row " + i + ": \"sourceEventIds\" must be a list of text");
+    });
+
+    // 3. hash chain
+    const startsAt = ledger.startsAt; const firstPrev = ledger.firstPrevHash;
+    if (!["GENESIS","SIGNED_ANCHOR","UNSIGNED_ANCHOR"].includes(startsAt)) throw new Reject("hash chain", "unknown chain start \"" + startsAt + "\"");
+    if (!HEX64.test(firstPrev)) throw new Reject("hash chain", "the first link is not a hash");
+    let expected = firstPrev;
+    for (let i = 0; i < rows.length; i++) {
+      if (rows[i].prevHash !== expected) throw new Reject("hash chain", "row " + i + " does not link to the row before it");
+      if ((await rowHash(rows[i])) !== rows[i].hash) throw new Reject("hash chain", "row " + i + " does not match its hash: it was altered");
+      expected = rows[i].hash;
+    }
+    if (startsAt === "GENESIS" && firstPrev !== GENESIS) throw new Reject("hash chain", "a chain that claims to start at genesis does not");
+    pass("hash chain", rows.length + " rows rehashed and linked");
+
+    // 4. checkpoints
+    const cps = body.checkpoints; if (!Array.isArray(cps)) throw new Reject("format", "\"checkpoints\" must be a list");
+    const signed = cps.filter((c) => c.signature !== "");
+    for (let i = 0; i < cps.length; i++) {
+      const c = cps[i];
+      if (c.signature === "") continue;
+      if (!c.publicKey) throw new Reject("checkpoints", "checkpoint " + i + " is signed but names no key");
+      const key = await importKey(c.publicKey, "checkpoint " + i);
+      const payload = enc.encode(c.hash + "|" + c.timestampMs + "|" + c.rowCount);
+      if (!(await verifySig(key, payload, c.signature, "checkpoint " + i))) throw new Reject("checkpoints", "checkpoint " + i + " has an invalid signature");
+    }
+    if (new Set(signed.map((c) => c.publicKey)).size > 1) throw new Reject("checkpoints", "checkpoints were signed with more than one key");
+    const anchor = cps.find((c) => c.hash === firstPrev);
+    let offset = 0;
+    if (startsAt === "SIGNED_ANCHOR") { if (!anchor || anchor.signature === "") throw new Reject("checkpoints", "the chain starts at an anchor with no signed checkpoint"); offset = anchor.rowCount; }
+    if (startsAt === "UNSIGNED_ANCHOR") { if (!anchor) throw new Reject("checkpoints", "the chain starts at an anchor with no checkpoint"); offset = anchor.rowCount; notes.push("Earlier history was summarised to save space; the start of this chain is not signed."); }
+    let positioned = 0;
+    cps.forEach((c, i) => {
+      if (c === anchor) return;
+      const index = c.rowCount - 1 - offset;
+      if (index < 0) notes.push("Checkpoint " + i + " covers history that has since been summarised and cannot be checked here.");
+      else if (index >= rows.length) throw new Reject("checkpoints", "checkpoint " + i + " claims rows that are not in the file");
+      else if (rows[index].hash !== c.hash) throw new Reject("checkpoints", "checkpoint " + i + " does not match the row it names");
+      else positioned++;
+    });
+    if (signed.length) {
+      const sealB64 = seal.publicKey;
+      if (signed[0].publicKey !== sealB64) throw new Reject("checkpoints", "the seal was made with a different key than the checkpoints");
+      pass("checkpoints", signed.length + " signed checkpoint(s) valid, " + positioned + " matched to the chain");
+    } else { notes.push("No checkpoint in this file is signed, so only the seal vouches for it."); pass("checkpoints", "no signed checkpoints"); }
+
+    // 5. findings
+    const present = new Set(rows.map((r) => r.hash));
+    (body.findings || []).forEach((f, i) => {
+      if (!Array.isArray(f.evidenceHashes)) throw new Reject("findings", "finding " + i + " has no evidence list");
+      f.evidenceHashes.forEach((h) => { if (!present.has(h)) throw new Reject("findings", "finding " + i + " cites a row that is not in the file"); });
+    });
+    pass("findings", (body.findings || []).length + " finding(s) cite only rows that are present");
+
+    const att = body.attestation || {};
+    if (Array.isArray(att.certificates) && att.certificates.length) {
+      notes.push("This file carries a hardware attestation chain. This page does not check it; use the command-line verifier (permsense-verify) to see whether the signing key is in secure hardware on a genuine device.");
+    } else {
+      notes.push("The signing key has no hardware attestation, so this does not show the file came from a genuine device.");
+    }
+    const review = (body.rulePack && body.rulePack.rulesAwaitingReview) || [];
+    if (review.length) notes.push("These rules cite regulation clauses that no reviewer has confirmed yet: " + review.join(", ") + ".");
+
+    const times = rows.map((r) => r.timestampMs);
+    summary = {
+      "Report made": new Date(body.createdAtMs).toISOString().replace("T", " ").slice(0, 16) + " UTC",
+      "Covers": times.length ? new Date(Math.min(...times)).toISOString().slice(0, 16).replace("T", " ") + " to " + new Date(Math.max(...times)).toISOString().slice(0, 16).replace("T", " ") + " UTC" : "no rows",
+      "Ledger rows": rows.length + " (" + startsAt + ")",
+      "Checkpoints": cps.length + ", " + signed.length + " signed",
+      "Findings": (body.findings || []).length,
+      "Rule pack": body.rulePack ? body.rulePack.version : "",
+    };
+    return { accepted: true, kind: "evidence", checks, notes, summary };
+  } catch (e) {
+    if (e instanceof Reject) { checks.push({ name: e.check, ok: false, detail: e.message }); return { accepted: false, kind: "evidence", checks, notes, summary: null }; }
+    checks.push({ name: "parse", ok: false, detail: "the file is malformed (" + (e && e.name) + ")" });
+    return { accepted: false, kind: "evidence", checks, notes, summary: null };
+  }
+}
+
+// ------------------------------------------------------------------ the probe's signed log
+
+async function verifyIntendedLog(bytes) {
+  const checks = []; const notes = [];
+  try {
+    let text; try { text = new TextDecoder("utf-8", { fatal: true }).decode(bytes); } catch (e) { throw new Reject("file layout", "the file is not valid UTF-8"); }
+    if (!text.endsWith("\n")) throw new Reject("file layout", "the file does not end with a newline");
+    if (text.includes("\r")) throw new Reject("file layout", "unexpected carriage return");
+    const lines = text.slice(0, -1).split("\n");
+    if (lines.some((l) => l === "")) throw new Reject("file layout", "there is an empty line");
+    checks.push({ name: "file layout", ok: true, detail: (lines.length - 1) + " access line(s) after the header" });
+
+    const h = strictJson(lines[0], "the header");
+    if (!sameKeys(h, ["type","format","createdMs","versionCode","publicKey","attestation","sig"])) throw new Reject("header", "the header has unexpected or missing fields");
+    if (h.type !== "header" || h.format !== 1) throw new Reject("header", "not a header this checker understands");
+    if (!isInt(h.createdMs) || !isInt(h.versionCode) || !Array.isArray(h.attestation)) throw new Reject("header", "the header has fields of the wrong kind");
+    const key = await importKey(h.publicKey, "log");
+    let previous = ["h1", h.createdMs, h.versionCode, h.publicKey, h.attestation.length].join("|");
+    if (!(await verifySig(key, enc.encode(previous), h.sig, "header"))) throw new Reject("signatures", "the header has an invalid signature: it was altered");
+    checks.push({ name: "header", ok: true, detail: "the log names its signing key and the header is signed by it" });
+
+    const strata = ["VISIBLE","FOREGROUND_SERVICE","BACKGROUND","SCREEN_OFF"], outcomes = ["OK","DENIED","UNAVAILABLE"];
+    const accesses = [];
+    for (let i = 1; i < lines.length; i++) {
+      const where = "line " + (i + 1);
+      const o = strictJson(lines[i], where);
+      if (!sameKeys(o, ["type","seq","tsMs","versionCode","op","trigger","step","interactive","keyguard","importance","expectedStratum","outcome","detail","prev","sig"])) throw new Reject("chain", where + " has unexpected or missing fields");
+      if (o.type !== "access") throw new Reject("chain", where + " is not an access");
+      for (const k of ["seq","tsMs","versionCode","importance"]) if (!isInt(o[k])) throw new Reject("format", where + ": \"" + k + "\" must be an integer");
+      for (const k of ["op","trigger","step","expectedStratum","outcome","detail","prev","sig"]) if (typeof o[k] !== "string") throw new Reject("format", where + ": \"" + k + "\" must be text");
+      for (const k of ["op","trigger","step","expectedStratum","outcome","detail"]) if (o[k].includes("|") || o[k].includes("\n")) throw new Reject("format", where + ": \"" + k + "\" contains a character that is not allowed");
+      if (typeof o.interactive !== "boolean" || typeof o.keyguard !== "boolean") throw new Reject("format", where + ": a flag is not true or false");
+      if (o.seq !== i) throw new Reject("chain", where + " is out of order (expected number " + i + ")");
+      if (!strata.includes(o.expectedStratum)) throw new Reject("chain", where + " names an unknown stratum");
+      if (!outcomes.includes(o.outcome)) throw new Reject("chain", where + " names an unknown outcome");
+      if (!HEX64.test(o.prev) || o.prev !== (await sha256(enc.encode(previous)))) throw new Reject("chain", where + " does not link to the line before it");
+      const canonical = ["a1", o.seq, o.tsMs, o.versionCode, o.op, o.trigger, o.step, o.interactive, o.keyguard, o.importance, o.expectedStratum, o.outcome, o.detail, o.prev].join("|");
+      if (!(await verifySig(key, enc.encode(canonical), o.sig, where))) throw new Reject("signatures", where + " has an invalid signature: it was altered");
+      accesses.push(o); previous = canonical;
+    }
+    checks.push({ name: "chain", ok: true, detail: accesses.length + " line(s) linked and signed, none missing, added or reordered" });
+
+    notes.push(h.attestation.length > 1
+      ? "The log carries an attestation chain. This page does not check it; use the command-line verifier (permsense-verify intended-log)."
+      : "The signing key has no attestation chain, so this does not show the log came from a genuine device.");
+    notes.push("A log cut short at the end still verifies: compare the entry count with what the run should have produced.");
+
+    const count = (f) => { const m = {}; accesses.forEach((a) => { m[a[f]] = (m[a[f]] || 0) + 1; }); return Object.entries(m).sort().map(([k, v]) => k + " ×" + v).join(", ") || "none"; };
+    return { accepted: true, kind: "intended", checks, notes, summary: { "Intended accesses": accesses.length, "By operation": count("op"), "By stratum": count("expectedStratum") } };
+  } catch (e) {
+    if (e instanceof Reject) { checks.push({ name: e.check, ok: false, detail: e.message }); return { accepted: false, kind: "intended", checks, notes, summary: null }; }
+    checks.push({ name: "parse", ok: false, detail: "the file is malformed (" + (e && e.name) + ")" });
+    return { accepted: false, kind: "intended", checks, notes, summary: null };
+  }
+}
+
+// ------------------------------------------------------------------ the page
+
+let original = null;      // the bytes as loaded
+let current = null;       // the bytes being checked (possibly with one byte changed)
+
+async function check(bytes) {
+  const looksLikeLog = bytes.length > 20 && new TextDecoder().decode(bytes.slice(0, 40)).startsWith('{"type":"header"');
+  return looksLikeLog ? verifyIntendedLog(bytes) : verifyEvidence(bytes);
+}
+
+function show(result, tampered) {
+  document.getElementById("result").style.display = "block";
+  const v = document.getElementById("verdict");
+  v.className = "verdict " + (result.accepted ? "ok" : "bad");
+  v.textContent = result.accepted
+    ? (result.kind === "evidence" ? "INTEGRITY VERIFIED. Nothing in this file has been altered since it was written." : "INTEGRITY VERIFIED. This is the log the probe wrote; nothing in it has been altered.")
+    : "REJECTED. Do not rely on this " + (result.kind === "evidence" ? "report." : "log.");
+  const ul = document.getElementById("checks"); ul.textContent = "";
+  result.checks.forEach((c) => {
+    const li = document.createElement("li");
+    const tag = document.createElement("span"); tag.className = "tag " + (c.ok ? "pass" : "fail"); tag.textContent = c.ok ? "ok" : "FAIL";
+    li.append(tag, " ", c.name + ": " + c.detail); ul.append(li);
+  });
+  const dl = document.getElementById("summary"); dl.textContent = "";
+  if (result.summary) Object.entries(result.summary).forEach(([k, val]) => { const dt = document.createElement("dt"); dt.textContent = k; const dd = document.createElement("dd"); dd.textContent = val; dl.append(dt, dd); });
+  const notes = result.notes.map((n) => "• " + n).join("\n");
+  document.getElementById("limits").innerText =
+    (notes ? notes + "\n\n" : "") +
+    "What this does and does not show: it shows the file has not been altered since PermSense wrote it. It does not show that the operating system's own data was true, and it cannot see a phone that was already compromised when the data was recorded. It makes no claim about admissibility in any legal proceeding.";
+  document.getElementById("reset").disabled = !tampered;
+}
+
+async function load(file) {
+  original = new Uint8Array(await file.arrayBuffer());
+  current = original;
+  document.getElementById("tamperNote").hidden = true;
+  show(await check(current), false);
+}
+
+document.getElementById("tamper").addEventListener("click", async () => {
+  if (!original) return;
+  const copy = original.slice();
+  // Change one byte somewhere in the file, chosen at random, by flipping its lowest bit.
+  const at = Math.floor(Math.random() * copy.length);
+  copy[at] ^= 1;
+  current = copy;
+  const note = document.getElementById("tamperNote");
+  note.textContent = "Changed byte " + at + " of " + copy.length + " (flipped one bit). The original file on disk is untouched.";
+  note.hidden = false;
+  show(await check(current), true);
+});
+
+document.getElementById("reset").addEventListener("click", async () => {
+  if (!original) return;
+  current = original; document.getElementById("tamperNote").hidden = true;
+  show(await check(current), false);
+});
+
+const drop = document.getElementById("drop"), input = document.getElementById("file");
+drop.addEventListener("click", () => input.click());
+drop.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") input.click(); });
+input.addEventListener("change", () => input.files[0] && load(input.files[0]));
+["dragenter","dragover"].forEach((t) => drop.addEventListener(t, (e) => { e.preventDefault(); drop.classList.add("over"); }));
+["dragleave","drop"].forEach((t) => drop.addEventListener(t, (e) => { e.preventDefault(); drop.classList.remove("over"); }));
+drop.addEventListener("drop", (e) => { const f = e.dataTransfer.files[0]; if (f) load(f); });
+
+// Exposed so the page can be tested without a browser UI.
+window.PermSenseVerify = { verifyEvidence, verifyIntendedLog };
+</script>
+</body>
+</html>

@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">PermSense</string>
+
+    <!-- Navigation -->
+    <string name="nav_findings">Findings</string>
+    <string name="nav_apps">Apps</string>
+    <string name="nav_summary">Summary</string>
+    <string name="nav_settings">Settings</string>
+
+    <!-- Findings -->
+    <string name="findings_title">What needs a look</string>
+    <string name="findings_loading">Checking your apps…</string>
+    <string name="findings_empty">Nothing needs your attention right now.</string>
+    <string name="findings_empty_detail">PermSense checks your apps every 15 minutes and will tell you if something looks wrong.</string>
+    <string name="findings_empty_limited">PermSense can only see which apps are installed and what they are allowed to do. To also see what apps actually do, set up the deeper checks in Settings.</string>
+    <string name="last_checked">Last checked: %1$s</string>
+    <string name="never">never</string>
+    <string name="check_now">Check now</string>
+    <string name="state_on">working</string>
+    <string name="state_off">not available</string>
+    <string name="tier_t0">Apps &amp; permissions</string>
+    <string name="tier_t1">App activity</string>
+    <string name="tier_t1plus">Phone history</string>
+    <string name="tier_t2">Live watch</string>
+
+    <!-- Actions -->
+    <string name="action_allow">Allow</string>
+    <string name="action_app_details">App details</string>
+    <string name="action_back">Back</string>
+    <string name="action_cancel">Cancel</string>
+    <string name="action_confirm_fix">Remove access</string>
+    <string name="action_erase">Erase everything</string>
+    <string name="action_export">Export evidence report</string>
+    <string name="action_not_useful">Not useful</string>
+    <string name="action_open_app_settings">Open in Android settings</string>
+    <string name="action_open_settings">Open settings</string>
+    <string name="action_open_shizuku">Open Shizuku</string>
+    <string name="action_quick_exit">Exit</string>
+    <string name="action_set_up">Set up</string>
+    <string name="action_undo">Undo</string>
+
+    <!-- Banners -->
+    <string name="banner_usage_access">Turn on “Usage access” for PermSense so it can tell when an app was on screen. Without it, PermSense can still list what apps are allowed to do, but cannot judge whether an access was hidden.</string>
+    <string name="banner_ledger_error">The private record on this phone could not be opened: %1$s</string>
+    <string name="banner_chain_broken">The saved record failed its self-check, so some findings may be missing. You can erase it in Settings and start fresh.</string>
+    <string name="banner_shizuku_not_allowed">Shizuku is running, but PermSense has not been allowed to use it yet.</string>
+    <string name="banner_live_paused">Live watch is paused. This is normal after your phone restarts: open Shizuku and start it again. PermSense keeps checking every 15 minutes in the meantime.</string>
+    <string name="banner_live_off">Live watch is off, so PermSense sees what apps are allowed to do, but only part of what they actually do. You can turn it on in setup.</string>
+    <string name="banner_learning">PermSense is still learning what is normal for each of your apps. Unusual-activity checks get better over the first week or two.</string>
+    <string name="banner_review">Some rules are still waiting for a person to review them (%1$s). Their wording may change.</string>
+
+    <!-- Apps -->
+    <string name="apps_title">Your apps</string>
+    <string name="apps_subtitle">Apps you installed, with the sensitive things each one is allowed to use.</string>
+    <string name="apps_empty">No apps found.</string>
+    <string name="apps_allowed">Allowed: %1$s</string>
+    <string name="apps_allowed_title">Allowed to use</string>
+    <string name="apps_none_sensitive">Nothing sensitive is allowed.</string>
+    <string name="apps_lending_badge">Treated as a digital-lending app</string>
+    <string name="apps_lending_switch">Treat as a digital-lending app</string>
+    <string name="apps_lending_hint">Lending apps are held to stricter rules, such as not reading contacts.</string>
+    <string name="app_not_installed">This app is no longer installed. Its history is kept until it ages out.</string>
+    <string name="version_number">version %1$d</string>
+
+    <!-- Timeline -->
+    <string name="timeline_title">Last 14 days</string>
+    <string name="timeline_recent">Recent activity</string>
+    <string name="timeline_none">Nothing recorded yet.</string>
+    <string name="timeline_older">Older activity is kept only as daily totals.</string>
+    <string name="timeline_max">most in a day: %1$d</string>
+    <string name="timeline_change">Access to %1$s changed (%2$s)</string>
+    <string name="stratum_visible">App on screen</string>
+    <string name="stratum_service">Visible background service</string>
+    <string name="stratum_background">In the background</string>
+    <string name="stratum_screen_off">Screen off or locked</string>
+    <string name="stratum_unknown">Not known</string>
+
+    <!-- Summary -->
+    <string name="summary_title">This week</string>
+    <string name="changes_title">Changes made through PermSense</string>
+    <string name="changes_hint">Each change was checked afterwards. You can undo any of them.</string>
+    <string name="changes_none">You haven’t changed anything through PermSense.</string>
+    <string name="change_line">Removed %1$s access from %2$s</string>
+
+    <!-- Fixing -->
+    <string name="fix_confirm_title">Remove this access?</string>
+    <string name="fix_confirm_body">PermSense will remove “%1$s” access from “%2$s”. You can undo this from the Summary tab. The app may not work properly without it.</string>
+    <string name="fix_confirm_body_foreground">PermSense will let “%2$s” use your %1$s only while the app is open. You can undo this from the Summary tab.</string>
+
+    <!-- Messages -->
+    <string name="msg_fix_done">Done. Android now shows this access as removed.</string>
+    <string name="msg_fix_already">It was already like that.</string>
+    <string name="msg_fix_not_applied">Android did not apply the change.</string>
+    <string name="msg_fix_failed">Could not change it: %1$s</string>
+    <string name="msg_fix_rejected">Not allowed: %1$s</string>
+    <string name="msg_undo_done">Restored.</string>
+    <string name="msg_export_failed">The report could not be created.</string>
+    <string name="msg_wiped">Everything PermSense had stored has been erased.</string>
+    <string name="msg_selfgrant_ok">Done. PermSense now holds %1$d permission(s) for itself.</string>
+    <string name="msg_selfgrant_failed">Could not do this: %1$s</string>
+    <string name="msg_need_shizuku">To change permissions from here PermSense needs Shizuku. Opening the app’s settings page instead.</string>
+    <string name="msg_lock_unavailable">Set a screen lock on your phone first, then try again.</string>
+    <string name="msg_copied">Copied.</string>
+    <string name="msg_cannot_open">This phone has no app that can open that.</string>
+
+    <!-- Settings -->
+    <string name="settings_title">Settings</string>
+    <string name="settings_language">Language</string>
+    <string name="lang_system">Phone’s language</string>
+    <string name="lang_en">English</string>
+    <string name="lang_hi">हिन्दी</string>
+    <string name="settings_privacy">Privacy and safety</string>
+    <string name="settings_lock">Lock PermSense</string>
+    <string name="settings_lock_detail">Asks for your fingerprint, face or screen lock each time you open it. It also hides PermSense from screenshots and the recent apps list.</string>
+    <string name="settings_digest">Weekly summary notification</string>
+    <string name="settings_digest_detail">Once a week, a short neutral note that your summary is ready. It never names an app.</string>
+    <string name="settings_quick_exit_detail">The Exit button closes PermSense at once and removes it from the recent apps list.</string>
+    <string name="settings_sensing">What PermSense checks</string>
+    <string name="settings_live">Live watch</string>
+    <string name="settings_live_detail">Needs Shizuku. Sees each access as it happens. When off, PermSense only checks every 15 minutes.</string>
+    <string name="settings_t1_only">Never use the broad DUMP permission</string>
+    <string name="settings_t1_only_detail">Skips the phone-history backfill. The permission it needs can read many system services, not only app permissions.</string>
+    <string name="settings_setup">Set up deeper checks</string>
+    <string name="settings_capabilities">What works on this phone</string>
+    <string name="settings_capabilities_hint">Press the button to try each kind of check and see which ones work here.</string>
+    <string name="settings_check_again">Check what works</string>
+    <string name="checking">Checking…</string>
+    <string name="settings_copy_report">Copy support report</string>
+    <string name="settings_evidence">Evidence</string>
+    <string name="export_limits">Creates a signed file and a readable report of what PermSense recorded. It proves the record was not changed after it was written. It does not prove that what Android reported was true, and PermSense makes no claim that it will be accepted in any legal proceeding.</string>
+    <string name="settings_erase">Erase everything</string>
+    <string name="settings_erase_detail">Deletes the private record, its keys and every exported file from this phone. This cannot be undone.</string>
+    <string name="erase_confirm_title">Erase everything?</string>
+    <string name="erase_confirm_body">This deletes everything PermSense has recorded on this phone, and its keys. Reports you already shared stay with whoever you gave them to. This cannot be undone.</string>
+
+    <!-- About and limits -->
+    <string name="about_title">About and limits</string>
+    <string name="about_no_network">PermSense has no internet access at all, and anyone can check that in the app’s permissions. Nothing leaves this phone unless you share a report yourself.</string>
+    <string name="about_integrity">A report proves that the record was not changed after PermSense wrote it. It does not prove that the information Android gave PermSense was true. Someone with full control of the phone could, in principle, change entries before they are recorded.</string>
+    <string name="about_legal">PermSense makes no claim that any report will be accepted in any legal proceeding.</string>
+    <string name="about_rules">Some rules, including the lending rules, cite regulations whose exact clause numbers still need to be confirmed by a person.</string>
+
+    <!-- Technical details -->
+    <string name="details_title">Technical details</string>
+    <string name="details_rows">Entries in the private record: %1$d</string>
+    <string name="details_chain_ok">Integrity check of the record: passed</string>
+    <string name="details_chain_broken">Integrity check of the record: FAILED</string>
+
+    <!-- Capabilities -->
+    <string name="cap_working">working</string>
+    <string name="cap_needs_setup">needs setup</string>
+    <string name="cap_off">switched off</string>
+    <string name="cap_failed">not working</string>
+    <string name="cap_t0_inventory">Installed apps</string>
+    <string name="cap_t0_usage">Usage access</string>
+    <string name="cap_fix">Removing permissions</string>
+
+    <!-- Lock -->
+    <string name="lock_title">PermSense is locked</string>
+    <string name="lock_unlock">Unlock</string>
+    <string name="biometric_title">Unlock PermSense</string>
+    <string name="biometric_subtitle">Use your fingerprint, face or screen lock</string>
+
+    <!-- Sharing -->
+    <string name="share_subject">PermSense evidence report</string>
+    <string name="share_chooser">Share the report</string>
+
+    <!-- Notification channels -->
+    <string name="channel_alerts">Updates</string>
+    <string name="channel_alerts_description">A short note when there is something new to look at.</string>
+    <string name="channel_digest">Weekly summary</string>
+    <string name="channel_digest_description">Once a week, a short summary of your apps.</string>
+
+    <!-- Setup -->
+    <string name="onb_continue">Continue</string>
+    <string name="onb_skip">Skip</string>
+    <string name="onb_start">Start</string>
+    <string name="onb_welcome_title">Welcome to PermSense</string>
+    <string name="onb_welcome_body">PermSense watches how your apps use their permissions (contacts, camera, microphone, location and more) and tells you, in plain words, when something looks wrong.</string>
+    <string name="onb_promise_1">Everything stays on this phone. PermSense has no internet access at all.</string>
+    <string name="onb_promise_2">It only watches. It changes nothing unless you press a button and confirm.</string>
+    <string name="onb_promise_3">Setup takes a few minutes. Only the next step is needed; the rest is optional.</string>
+    <string name="onb_usage_title">Step 1: Usage access</string>
+    <string name="onb_usage_body">This lets PermSense see when an app was open on your screen. That is how it tells an access you could see from one you could not.</string>
+    <string name="onb_usage_note">In the list, find PermSense and switch it on, then come back here.</string>
+    <string name="onb_state_on">Done</string>
+    <string name="onb_state_off">Not done yet</string>
+    <string name="onb_notif_title">Step 2: Notifications (optional)</string>
+    <string name="onb_notif_body">PermSense can send a short, neutral note when something needs a look, and a weekly summary. Notifications never name an app and are hidden on the lock screen.</string>
+    <string name="onb_notif_button">Allow notifications</string>
+    <string name="onb_deeper_title">Step 3: Go deeper (optional)</string>
+    <string name="onb_deeper_body">Without this step PermSense lists what every app can use. With it, PermSense also sees what apps actually do and when, even in the background. It needs a helper app called Shizuku.</string>
+    <string name="onb_shizuku_title">Shizuku</string>
+    <string name="onb_shizuku_missing">Shizuku is not installed. Install it from its official page, then come back here.</string>
+    <string name="onb_shizuku_page">Open Shizuku’s page</string>
+    <string name="onb_shizuku_stopped">Shizuku is installed but not running. Open it and start it with “Wireless debugging” (Android 11 or later). Android will show a pairing code once.</string>
+    <string name="onb_shizuku_restart">After every restart of your phone, Shizuku must be started again. That is normal, not a fault. PermSense keeps working in the meantime, with fewer details.</string>
+    <string name="onb_shizuku_allow">Shizuku is running. Allow PermSense to use it.</string>
+    <string name="onb_shizuku_ready">Shizuku is running and PermSense is allowed to use it.</string>
+    <string name="onb_dev_options">Developer options</string>
+    <string name="onb_oem_title">On your phone</string>
+    <string name="oem_xiaomi">On Xiaomi, Redmi and POCO phones, also switch on “USB debugging (Security settings)”. It is a separate switch from ordinary USB debugging.</string>
+    <string name="oem_oppo">On OPPO, Realme and OnePlus phones, switch off “Permission monitoring” in Developer options before starting Shizuku.</string>
+    <string name="oem_vivo">Phone makers sometimes add their own switch for debugging. If a step here seems to do nothing, look in Developer options for an extra debugging switch, and see Shizuku’s own guide for your brand.</string>
+    <string name="oem_samsung">Phone makers sometimes add their own switch for debugging. If a step here seems to do nothing, look in Developer options for an extra debugging switch, and see Shizuku’s own guide for your brand.</string>
+    <string name="oem_huawei">Phone makers sometimes add their own switch for debugging. If a step here seems to do nothing, look in Developer options for an extra debugging switch, and see Shizuku’s own guide for your brand.</string>
+    <string name="onb_grant_title">Make the checks survive restarts</string>
+    <string name="onb_grant_body">Gives PermSense a few Android permissions, once, so its 15-minute checks keep working after a restart even when Shizuku is off. After this you can switch developer options off again.</string>
+    <string name="onb_grant_button">Give PermSense these permissions</string>
+    <string name="onb_grant_done">Done. The checks will keep working after a restart.</string>
+    <string name="onb_grant_needs_shizuku">This needs Shizuku to be running and allowed first.</string>
+    <string name="onb_t1_only_body">Skip the phone-history backfill, so the broad DUMP permission is never asked for or used.</string>
+    <string name="onb_dev_off">Some banking apps refuse to run while developer options are on. Once the permissions above are given, you can switch developer options off again.</string>
+    <string name="onb_done_title">All set</string>
+    <string name="onb_done_body">Here is what works on this phone. You can change any of this later in Settings.</string>
+    <string name="onb_check">Check what works</string>
+
+</resources>
